@@ -109,11 +109,11 @@ MAT = computeMAT(imgLD,28);
 [MATcontourImages,MATskeletonImages,skeletalBranches]=computeAllMATproperties(MAT,imgLD);
 figure;
 subplot(1,2,1);
-drawMATproperty(MATskeletonImages.mirror);
+drawMATproperty(cute, "mirror");
 title('Mirror Symmetry','FontSize',24);
 subplot(1,2,2);
-drawMATproperty(MATcontourImages.mirror);
-title('Mirror Symmetry','FontSize',24);
+drawMATproperty(cute, "parallelism");
+title('Parallelism','FontSize',24);
 ```
 
 Output:
