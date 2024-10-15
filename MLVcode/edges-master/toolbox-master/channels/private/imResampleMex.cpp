@@ -9,6 +9,8 @@
 #include <typeinfo>
 #include "sse.hpp"
 typedef unsigned char uchar;
+typedef simde__m128 __m128;
+#define _mm_shuffle_ps simde_mm_shuffle_ps
 
 // compute interpolation values for single column for resapling
 template<class T> void resampleCoef( int ha, int hb, int &n, int *&yas,

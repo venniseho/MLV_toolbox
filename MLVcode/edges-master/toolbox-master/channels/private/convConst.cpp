@@ -7,6 +7,14 @@
 #include <string.h>
 #include "sse.hpp"
 
+// Map SSE types to SIMDE types
+typedef simde__m128 __m128;
+typedef simde__m128i __m128i;
+
+// Map directly used SSE intrinsics to SIMDE equivalents
+#define _mm_shuffle_ps simde_mm_shuffle_ps
+
+
 // convolve one column of I by a 2rx1 ones filter
 void convBoxY( float *I, float *O, int h, int r, int s ) {
   float t; int j, p=r+1, q=2*h-(r+1), h0=r+1, h1=h-r, h2=h;

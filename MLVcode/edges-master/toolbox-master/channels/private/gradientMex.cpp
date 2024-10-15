@@ -7,8 +7,12 @@
 #include <math.h>
 #include "string.h"
 #include "sse.hpp"
+typedef simde__m128 __m128;
+typedef simde__m128i __m128i;
 
 #define PI 3.14159265f
+
+
 
 // compute x and y gradients for just one column (uses sse)
 void grad1( float *I, float *Gx, float *Gy, int h, int w, int x ) {
