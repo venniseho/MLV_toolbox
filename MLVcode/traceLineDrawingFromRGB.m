@@ -60,10 +60,12 @@ while(coverage <0.01 && threshold_edge_strength ~=1)
 end
 
 image = ~F;
+disp("hit seg list")
 SegList  = GetConSeg(image);
 all_boundary_points = find(image~=0);
 
 vecLD.numContours = length(SegList);
+disp(vecLD.numContours);
 vecLD.contours = {};
 for i = 1 : length(SegList)
     contour = SegList{i};
