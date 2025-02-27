@@ -19,6 +19,7 @@ function test_sam_thresholds
     
     % Process each image with different ScoreThreshold values
     for i = 1:length(imageFiles)
+        fprintf('Image Number: %d \n', i);
         fileName = imageFiles(i).name;
         imgPath = fullfile(inputFolder, fileName);
         img = imread(imgPath);
@@ -31,8 +32,14 @@ function test_sam_thresholds
             % Convert label matrix to edge map
             edges = labelMatrix2edges(labelmatrix(masks));
             
-            % Overlay edges on the original image
-            overlayImg = labeloverlay(img, edges);
+            % Convert edge map to a vectorized line drawing
+            vecLD = GetConSeg(edges);  
+            disp(length(vecLD));
+            
+            % Create a figure for the line drawing
+            figure;
+            drawLinedrawing(vecLD); % Draws the extracted contours
+            title(sprintf('Line Drawing (Threshold=%.1f)', thresholds(t)));
             
             % Save the output image
             outputFileName = sprintf('%s_thresh_%.1f.png', fileName(1:end-4), t);
