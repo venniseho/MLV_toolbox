@@ -321,8 +321,12 @@ void mexFunction( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
     // V = visualize( S, I, hasBnds )
     float *I = (float*) mxGetData(pr[1]);
     bool hasBnds = mxGetScalar(pr[2])>0;
-    const mwSize dims[3] = {(int)h,(int)w,3};
-    pl[0] = mxCreateNumericArray(3,dims,mxSINGLE_CLASS,mxREAL);
+
+    const int dims[3] = {(int)h,(int)w,3};
+    const mwSize dims_mwSize[] = {static_cast<mwSize>(dims[0]), static_cast<mwSize>(dims[1]), static_cast<mwSize>(dims[2])};
+    pl[0] = mxCreateNumericArray(3, dims_mwSize, mxSINGLE_CLASS, mxREAL);
+    // pl[0] = mxCreateNumericArray(3,dims,mxSINGLE_CLASS,mxREAL); // Old Version
+
     float* V = (float*) mxGetData(pl[0]);
     visualize(V,S,h,w,I,hasBnds);
 

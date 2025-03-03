@@ -7,6 +7,14 @@
 #include <string.h>
 #include "sse.hpp"
 
+// Map SSE types to SIMDE types
+typedef simde__m128 __m128;
+typedef simde__m128i __m128i;
+
+// Map directly used SSE intrinsics to SIMDE equivalents
+#define _mm_shuffle_ps simde_mm_shuffle_ps
+
+
 // convolve one column of I by a 2rx1 ones filter
 void convBoxY( float *I, float *O, int h, int r, int s ) {
   float t; int j, p=r+1, q=2*h-(r+1), h0=r+1, h1=h-r, h2=h;
@@ -197,7 +205,8 @@ void convMax( float *I, float *O, int h, int w, int d, int r ) {
 // B=convConst(type,A,r,s); fast 2D convolutions (see convTri.m and convBox.m)
 #ifdef MATLAB_MEX_FILE
 void mexFunction( int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[] ) {
-  int *ns, ms[3], nDims, d, m, r, s; float *A, *B, p;
+  int nDims; float *A, *B, p;
+  mwSize ms[3]; mwSize *ns, d, m, r, s;;
   mxClassID id; char type[1024];
 
   // error checking on arguments
@@ -205,7 +214,7 @@ void mexFunction( int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[] ) {
   if(nlhs > 1) mexErrMsgTxt("One output expected.");
   nDims = mxGetNumberOfDimensions(prhs[1]);
   id = mxGetClassID(prhs[1]);
-  ns = (int*) mxGetDimensions(prhs[1]);
+  ns = (mwSize*) mxGetDimensions(prhs[1]);
   d = (nDims == 3) ? ns[2] : 1;
   m = (ns[0] < ns[1]) ? ns[0] : ns[1];
   if( (nDims!=2 && nDims!=3) || id!=mxSINGLE_CLASS || m<4 )
