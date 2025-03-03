@@ -1,4 +1,4 @@
-function [vecLD,img] = traceLineDrawingFromRGB(fileName,method,img)
+function [vecLD,img] = traceLineDrawingFromRGB(fileName,method,scoreThreshold, img)
 % vecLD = traceLineDrawingFromRGB(fileName)
 % Converts an RGB image into a vectorized line drawing
 %
@@ -23,17 +23,16 @@ function [vecLD,img] = traceLineDrawingFromRGB(fileName,method,img)
 % Contact: Morteza.Rezanejad@gmail.com
 %------------------------------------------------------
 
-threshold_edge_strength = 0.85;
-
-% Default method to 'StructuredEdgeDetection' if no method is specified
-if nargin < 2
-    method = 'StructuredEdgeDetection';
+arguments
+    fileName (1, 1) string
+    method (1, 1) string = 'SAM'
+    scoreThreshold (1, 1) double = 0.5
+    img {mustBeNumeric} = []
 end
 
-% Load img from rgb image file if img is omitted
-if nargin < 3
+if isempty(img)
     img = imread(fileName);
-end 
+end
 
 imsize = size(img);
 vecLD.originalImage = fileName;
@@ -44,7 +43,10 @@ switch upper(method)
     
     % Dollar's Code - original code using the structured edge detection model
     case 'STRUCTUREDEDGEDETECTION'
-        disp("Running Structured Edge Detection Model")
+        disp("WARNING: You are running the Structured Edge Detection Model. " + ...
+            "This is an older model that will not function on Windows 11 and Mac.");
+
+        threshold_edge_strength = 0.85;
         model=load('edges-master/models/forest/modelBsds'); model=model.model;
         model.opts.nms=-1; model.opts.nThreads=4;
         model.opts.multiscale=0; model.opts.sharpen=2;
@@ -77,7 +79,12 @@ switch upper(method)
 
     % Segment Anything Model (SAM) Code
     case 'SAM'
-        [masks,~] = imsegsam(img,ScoreThreshold=0.5);
+        addons = matlab.addons.installedAddons;
+        if ~ismember("Image Processing Toolbox Model for Segment Anything Model", addons.Name) || ~ismember("Deep Learning Toolbox", addons.Name)
+            error("One or more of the required addons to run the Segment Anything Model (SAM) are not installed: " + ...
+                 "Image Processing Toolbox Model for Segment Anything Model, Deep Learning Toolbox.")
+        end 
+        [masks,~] = imsegsam(img,ScoreThreshold=scoreThreshold);
         labelMatrix = labelmatrix(masks);
         image = labelMatrix2edges(labelMatrix);
 
