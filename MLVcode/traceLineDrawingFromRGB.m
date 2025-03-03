@@ -28,7 +28,6 @@ threshold_edge_strength = 0.85;
 % Default method to 'StructuredEdgeDetection' if no method is specified
 if nargin < 2
     method = 'StructuredEdgeDetection';
-    disp("method")
 end
 
 % Load img from rgb image file if img is omitted
@@ -45,6 +44,7 @@ switch upper(method)
     
     % Dollar's Code - original code using the structured edge detection model
     case 'STRUCTUREDEDGEDETECTION'
+        disp("Running Structured Edge Detection Model")
         model=load('edges-master/models/forest/modelBsds'); model=model.model;
         model.opts.nms=-1; model.opts.nThreads=4;
         model.opts.multiscale=0; model.opts.sharpen=2;
@@ -90,6 +90,7 @@ SegList  = GetConSeg(image);
 all_boundary_points = find(image~=0);
 
 vecLD.numContours = length(SegList);
+disp(vecLD.numContours)
 vecLD.contours = {};
 
 for i = 1 : length(SegList)
