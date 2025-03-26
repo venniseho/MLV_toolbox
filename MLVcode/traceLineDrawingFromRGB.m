@@ -97,7 +97,6 @@ SegList  = GetConSeg(image);
 all_boundary_points = find(image~=0);
 
 vecLD.numContours = length(SegList);
-disp(vecLD.numContours)
 vecLD.contours = {};
 
 for i = 1 : length(SegList)

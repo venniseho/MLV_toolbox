@@ -3,19 +3,26 @@
 % March 2025
 
 % Load dataset (Doreen's Stimuli)
-stimuliFolder = 'exploring_closure'; % Update with actual path
-stimuliFile = fullfile(stimuliFolder, 'jitter-stimuli.json');
+stimuliFolder = 'stimuli\Distortion004\FixationOutside\Jitter20_Color-WhiteBackground'; 
 
-% Read JSON file with stimuli information
-stimuliData = jsondecode(fileread(stimuliFile));
+% Get list of image files in the folder 
+imageFiles = dir(fullfile(stimuliFolder, '*.png')); 
 
-% Initialize results table
-resultsTable = table();
+% Display the list of image files
+disp(imageFiles);
 
-% Loop through each stimulus entry
-% for i = 1:length(stimuliData)
-for i = 1:5
-    fileName = fullfile(stimuliFolder, stimuliData(i).image);
+% Initialize results table with preallocation
+numImages = length(imageFiles);
+resultsTable = table(cell(numImages, 1), NaN(numImages, 1), NaN(numImages, 1), NaN(numImages, 1), ...
+                    NaN(numImages, 1), NaN(numImages, 1), NaN(numImages, 1), NaN(numImages, 1), ...
+                    NaN(numImages, 1), NaN(numImages, 1), ...
+                    'VariableNames', {'ImageName', 'Junctions', 'ContourLength', 'NumContours', ...
+                                      'MirrorSymmetry', 'TaperSymmetry', 'Curvature', ...
+                                      'MedialAxisBranches', 'DistanceMapMean', 'AOFMean'});
+
+% Loop through each image in the dataset
+for i = 1:5      %numImages          
+    fileName = fullfile(imageFiles(i).folder, imageFiles(i).name);
     img = imread(fileName);
 
     % Extract Line Drawing
@@ -30,31 +37,32 @@ for i = 1:5
 
     % Extract property metrics
     numJunctions = length(vecLD.junctions);  % Example property
-    totalContourLength = sum(arrayfun(@(x) sum(vecLD.edges{x}.edgelength), 1:length(vecLD.edges)));
-    numContours = length(vecLD.edges);
+    numContours = length(vecLD.numContours);
 
     % Additional properties
-    mirrorSymmetry = computeMATproperty(MAT, 'mirror');
-    taperSymmetry = computeMATproperty(MAT, 'taper');
-    curvature = computeContourProperty(vecLD, 'curvature');
+    %[mirrorSymmetryImage, skeletalBranchesMirror] = computeMATproperty(MAT, 'mirror');
+    %[taperSymmetryImage, skeletalBranchesTaper] = computeMATproperty(MAT, 'taper');
+    curvature = computeCurvature(vecLD);
     medialAxisBranches = length(MAT.skeleton); % Number of medial axis branches
     distanceMapMean = mean(MAT.distance_map(:));
     aofMean = mean(MAT.AOF(:));
 
     % Store results in table
-    newRow = table({stimuliData(i).image}, numJunctions, totalContourLength, numContours, ...
-                    mirrorSymmetry, taperSymmetry, curvature, medialAxisBranches, ...
-                    distanceMapMean, aofMean, ...
-                    'VariableNames', {'ImageName', 'Junctions', 'ContourLength', 'NumContours', ...
-                                      'MirrorSymmetry', 'TaperSymmetry', 'Curvature', ...
-                                      'MedialAxisBranches', 'DistanceMapMean', 'AOFMean'});
-    resultsTable = [resultsTable; newRow];
+    resultsTable.ImageName{i} = imageFiles(i).name;
+    resultsTable.Junctions(i) = numJunctions;
+    resultsTable.NumContours(i) = numContours;
+    %resultsTable.MirrorSymmetry(i) = mean(skeletalBranchesMirror(:));  % Take mean of branch ratings
+    %resultsTable.TaperSymmetry(i) = mean(skeletalBranchesTaper(:));      % Take mean of branch ratings
+    resultsTable.Curvature(i) = curvature;
+    resultsTable.MedialAxisBranches(i) = medialAxisBranches;
+    resultsTable.DistanceMapMean(i) = distanceMapMean;
+    resultsTable.AOFMean(i) = aofMean;
 
     % Display results
     figure;
     subplot(2, 2, 1);
     drawLinedrawing(vecLD);
-    title(['Original Line Drawing - ', stimuliData(i).image]);
+    title(['Original Line Drawing - ', imageFiles(i).name]);
 
     subplot(2, 2, 2);
     imshow(imoverlay(rgb2gray(imgLD), MAT.skeleton, 'b'));
@@ -69,10 +77,10 @@ for i = 1:5
     title('Contour Junctions');
 
     % Save results
-    outputPath = fullfile('output', ['results_' stimuliData(i).image '.png']);
+    outputPath = fullfile('output', ['results_' strrep(imageFiles(i).name, '/', '_') '.png']);
     saveas(gcf, outputPath);
 
-    fprintf('Analysis complete for %s. Results saved to %s\n', stimuliData(i).image, outputPath);
+    fprintf('Analysis complete for %s. Results saved to %s\n', imageFiles(i).name, outputPath);
 end
 
 % Save results table to Excel file
