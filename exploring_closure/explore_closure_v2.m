@@ -23,7 +23,7 @@ vecLD = computeContourProperties(vecLD);
 figure;
 subplot(2, 3, 1); imshow(img); title('Original Image');
 subplot(2, 3, 2); drawLinedrawing(vecLD); title('Line Drawing');
-% subplot(2, 3, 3); drawMATproperty(MATskeletonImages, 'separation'); title('Medial Axis');
+subplot(2, 3, 3); drawMATproperty(MATskeletonImages, 'separation'); title('Medial Axis');
 subplot(2, 3, 4); drawLinedrawingProperty(vecLD, 'orientation'); title('Orientation');
 subplot(2, 3, 5); drawLinedrawingProperty(vecLD, 'junctions'); title('Junctions');
 

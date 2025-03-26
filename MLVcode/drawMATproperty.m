@@ -28,7 +28,7 @@ end
 property = lower(property);
 disp(fieldnames(vecLD));
 disp(property)
-if ~isfield(vecLD,[property])
+if ~isfield(vecLD,[property, '_allX'])
     warning(['Property ',property,' has not been computed.']);
     return
 end
