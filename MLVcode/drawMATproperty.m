@@ -26,8 +26,7 @@ if nargin < 3
 end
 
 property = lower(property);
-disp(fieldnames(vecLD));
-disp(property)
+
 if ~isfield(vecLD,[property, '_allX'])
     warning(['Property ',property,' has not been computed.']);
     return

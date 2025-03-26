@@ -13,8 +13,8 @@ function output_structured_edge_detection_images
     end
 
     % Define input and output folders
-    inputFolder = 'C:\Users\venni\MATLAB\Projects\vennise-fork\MLVcode\vennise-scripts\input_images';  % Folder with test images
-    outputFolder = 'C:\Users\venni\MATLAB\Projects\vennise-fork\MLVcode\vennise-scripts\output_images_SED'; % Folder to save results
+    inputFolder = 'vennise-scripts\input_images';  % Folder with test images
+    outputFolder = 'vennise-scripts\output_images_SED'; % Folder to save results
 
     if ~exist(outputFolder, 'dir')
         mkdir(outputFolder); % Create output folder if it doesn't exist
