@@ -12,7 +12,7 @@ function result = compute_property_statistics(fileName, vecLD)
     % result.maxOrientation = max(vecLD.orientations, [], 'omitnan');
     % result.stdOrientation = std(vecLD.orientations, 'omitnan');
     % result.medianOrientation = median(vecLD.orientations, 'omitnan');
-    
+    [vecLD, ~, ~] = getCurvatureStats(vecLD);
     % Contour Length
     result.meanContourLength = mean(vecLD.contourLengths, 'omitnan');
     result.minContourLength = min(vecLD.contourLengths, [], 'omitnan');
